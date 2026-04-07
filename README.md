@@ -19,7 +19,7 @@ Uma aplicação *Single Page Application* (SPA) desenvolvida em React para gest�
       <b>Transações - Desktop</b>
     </td>
     <td align="center">
-      <img src=".preview/mobile.PNG" width="250px;" alt="Transações Mobile"/><br>
+      <img src=".preview/mobile.png" width="250px;" alt="Transações Mobile"/><br>
       <b>Transações - Mobile</b>
     </td>
   </tr>
