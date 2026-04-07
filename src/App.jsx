@@ -4,10 +4,11 @@ import TransactionsForm from "./components/TransactionsForm";
 import TransactionsList from "./components/TransactionsList";
 import Feedback from "./components/Feedback";
 import Loading from "./components/Loading";
+import TransactionsProvider from "./context/TransactionsProvider";
 
 export default function App() {
   return (
-    <div className="w-screen min-w-screen h-screen min-h-screen flex flex-col">
+    <TransactionsProvider>
       <Header />
       <TransactionsController />
       <TransactionsForm />
@@ -15,6 +16,6 @@ export default function App() {
       <Feedback />
       <Loading />
       <footer>Footer here</footer>
-    </div>
+    </TransactionsProvider>
   );
 }
