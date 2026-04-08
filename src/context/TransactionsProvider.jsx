@@ -9,6 +9,8 @@ export default function TransactionsProvider({ children }) {
   const [filteredTransactions, setFilteredTransactions] =
     useState(transactionList);
 
+  const [selectedTransaction, setSelectedTransaction] = useState(null); // null || {}
+
   return (
     <TransactionsContext.Provider
       value={{
@@ -18,6 +20,8 @@ export default function TransactionsProvider({ children }) {
         setTransactionList,
         filteredTransactions,
         setFilteredTransactions,
+        selectedTransaction,
+        setSelectedTransaction,
       }}
     >
       {children}
