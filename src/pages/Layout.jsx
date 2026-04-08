@@ -8,10 +8,17 @@ export default function Layout() {
   return (
     <div className="relative flex flex-col w-screen min-w-screen h-screen min-h-screen bg-base-200">
       <Header />
-      <Outlet />
-      <TransactionsForm />
-      <Feedback />
-      <Loading />
+
+      <main>
+        <Outlet />
+      </main>
+
+      <aside>
+        <TransactionsForm />
+        <Feedback />
+        <Loading />
+      </aside>
+
       <footer className="absolute bottom-0 footer sm:footer-horizontal footer-center bg-base-100 text-base-content p-4">
         <aside>
           <p>
