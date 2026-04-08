@@ -1,4 +1,3 @@
-import React from "react";
 import { useTransactions } from "../context/TransactionsProvider";
 
 export default function TransactionsList() {

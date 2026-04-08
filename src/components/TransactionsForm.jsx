@@ -3,16 +3,7 @@ import { useTransactions } from "../context/TransactionsProvider";
 export default function TransactionsForm() {
   const { transactionAction, setTransactionAction } = useTransactions();
 
-  if (!transactionAction) {
-    return (
-      <button
-        className="fixed bottom-2 right-2 btn btn-primary btn-sm"
-        onClick={() => setTransactionAction("creating")}
-      >
-        + Transação
-      </button>
-    );
-  }
+  if (!transactionAction) return null;
 
   return (
     <div className="fixed top-0 right-0 w-screen min-w-screen h-screen min-h-screen z-40 flex items-center justify-center">
