@@ -1,3 +1,6 @@
+# Professor's API
+.server/
+
 # Logs
 logs
 *.log

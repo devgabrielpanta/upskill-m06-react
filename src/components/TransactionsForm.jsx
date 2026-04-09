@@ -1,35 +1,44 @@
-import { useState } from "react";
+import { useReducer } from "react";
 import { useTransactions } from "../context/TransactionsProvider";
-import {
-  TrendingUp,
-  TrendingDown,
-  ChevronDown,
-  Check,
-  ClipboardClock,
-} from "lucide-react";
+import { TrendingUp, TrendingDown, ChevronDown } from "lucide-react";
+import { formattedAmountCurrency } from "../utils/dataTypeUtils";
+
+const initialTransaction = {
+  id: null,
+  description: "",
+  amount: formattedAmountCurrency(""),
+  type: "income",
+  category: "Selecionar...",
+  date: new Date().toISOString().split("T")[0],
+};
+
+function reducer(state, action) {
+  switch (action.type) {
+    case "setInitialData":
+      return (state = action.payload);
+    case "setFieldValue":
+      return (state = { ...state, [action.field]: action.value });
+  }
+}
 
 export default function TransactionsForm() {
-  const { transactionAction, setTransactionAction, selectedTransaction } =
-    useTransactions();
+  const { transactionAction, setTransactionAction } = useTransactions();
+  const [state, dispatch] = useReducer(reducer, initialTransaction);
 
-  // Local state for form fields, initialized with selectedTransaction values or defaults
-  const [type, setType] = useState(selectedTransaction?.type || "income");
-  const [amount, setAmount] = useState(selectedTransaction?.amount || "0.00");
-  const [date, setDate] = useState(
-    selectedTransaction?.date || new Date().toISOString().split("T")[0],
-  );
-  const [category, setCategory] = useState(
-    selectedTransaction?.category || "Selecionar...",
-  );
-  const [fulfilled, setFulfilled] = useState(
-    selectedTransaction?.fulfilled ?? true,
-  );
-  const [description, setDescription] = useState(
-    selectedTransaction?.description || "",
-  );
+  // Dispatch reducer state changes
+  const handleInputChange = (field, value) => {
+    let parsedValue = value;
+
+    if (field === "amount") {
+      parsedValue = formattedAmountCurrency(value);
+    }
+
+    dispatch({ type: "setFieldValue", field, value: parsedValue });
+  };
 
   // Return income or expense button based on the variant
   const renderButton = (variant) => {
+    const type = state.type;
     const isIncome = variant === "income";
     const Icon = isIncome ? TrendingUp : TrendingDown;
     const colorClass = isIncome ? "btn-success" : "btn-error";
@@ -37,13 +46,18 @@ export default function TransactionsForm() {
 
     return (
       <button
-        className={`btn btn-soft btn-sm ${colorClass} ${type === variant ? "opacity-100 shadow-md" : "opacity-40"}`}
-        onClick={() => setType(variant)}
+        className={`btn btn-soft btn-xs ${colorClass} ${type === variant ? "opacity-100 shadow-md" : "opacity-40"}`}
+        onClick={() => handleInputChange("type", variant)}
       >
         <Icon />
         {text}
       </button>
     );
+  };
+
+  const handleCloseForm = () => {
+    setTransactionAction(null);
+    dispatch({ type: "setInitialData", payload: initialTransaction });
   };
 
   if (!transactionAction) return null;
@@ -52,7 +66,7 @@ export default function TransactionsForm() {
     <div className="fixed top-0 right-0 w-screen min-w-screen h-screen min-h-screen z-40 flex items-center justify-center">
       <div
         className="absolute w-full h-full bg-neutral/40 z-40"
-        onClick={() => setTransactionAction(null)}
+        onClick={handleCloseForm}
       ></div>
       <div className="flex flex-col bg-base-100 z-50 rounded-lg w-[90vw] lg:w-fit p-4">
         <div className="flex flex-row items-end justify-between">
@@ -64,10 +78,7 @@ export default function TransactionsForm() {
                 : "Excluir "}
             Transação
           </h4>
-          <button
-            className="btn btn-soft"
-            onClick={() => setTransactionAction(null)}
-          >
+          <button className="btn btn-soft" onClick={handleCloseForm}>
             Fechar
           </button>
         </div>
@@ -75,38 +86,41 @@ export default function TransactionsForm() {
         <div className="divider"></div>
 
         <div className="flex flex-col w-full items-center gap-3">
-          {/* INCOME / EXPENSE BUTTONS */}
-          <div className="grid grid-cols-2 w-[90%] gap-4 bg-base-200 p-2 rounded-lg">
-            {renderButton("income")}
-            {renderButton("expense")}
-          </div>
-
-          <div className="grid grid-cols-2 gap-4 w-full">
+          <div className="grid grid-cols-[6rem_1fr] gap-4 w-full">
             {/* AMOUNT */}
             <div className="flex flex-col gap-2 text-xs font-medium">
               Valor
               <input
                 type="text"
-                className={`input bg-base-200 ${type === "income" ? "text-green-600" : "text-red-600"}`}
+                className={`input bg-base-200 ${state.type === "income" ? "text-green-600" : "text-red-600"}`}
                 placeholder="0.00 €"
-                value={amount}
-                onChange={(e) => setAmount(e.target.value)}
+                value={state.amount}
+                onChange={(e) => handleInputChange("amount", e.target.value)}
               />
             </div>
 
+            {/* TYPE */}
+            <div className="flex flex-col gap-2 text-xs font-medium">
+              Tipo
+              <div className="input bg-base-200">
+                {renderButton("income")}
+                {renderButton("expense")}
+              </div>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4 w-full items-center mt-4">
             {/* DATE */}
             <div className="flex flex-col gap-2 text-xs font-medium">
               Data
               <input
                 type="date"
                 className="input bg-base-200"
-                value={date}
-                onChange={(e) => setDate(e.target.value)}
+                value={state.date}
+                onChange={(e) => handleInputChange("date", e.target.value)}
               />
             </div>
-          </div>
 
-          <div className="grid grid-cols-2 gap-4 w-full items-center mt-4">
             {/* CATEGORY SELECTOR */}
             <div className="flex flex-col gap-2 text-xs font-medium">
               Categoria
@@ -116,7 +130,7 @@ export default function TransactionsForm() {
                   role="button"
                   className="input m-1 flex justify-between items-center bg-base-200"
                 >
-                  <span>{category}</span>
+                  <span>{state.category}</span>
                   <ChevronDown />
                 </div>
                 <ul
@@ -124,39 +138,30 @@ export default function TransactionsForm() {
                   className="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm"
                 >
                   <li>
-                    <a onClick={() => setCategory("Transporte")}>Transporte</a>
+                    <a
+                      onClick={() =>
+                        handleInputChange("category", "Transporte")
+                      }
+                    >
+                      Transporte
+                    </a>
                   </li>
                   <li>
-                    <a onClick={() => setCategory("Aluguel")}>Aluguel</a>
+                    <a onClick={() => handleInputChange("category", "Aluguel")}>
+                      Aluguel
+                    </a>
                   </li>
                   <li>
-                    <a onClick={() => setCategory("Alimentação")}>
+                    <a
+                      onClick={() =>
+                        handleInputChange("category", "Alimentação")
+                      }
+                    >
                       Alimentação
                     </a>
                   </li>
                 </ul>
               </div>
-            </div>
-
-            {/* STATUS */}
-            <div className="flex flex-col gap-2 text-xs font-medium">
-              Status
-              <button
-                className={`btn flex items-center justify-center bg-base-200`}
-                onClick={() => setFulfilled(!fulfilled)}
-              >
-                {fulfilled ? (
-                  <>
-                    <Check size={16} />
-                    <span>{type === "income" ? "Recebido" : "Pago"}</span>
-                  </>
-                ) : (
-                  <>
-                    <ClipboardClock size={16} />
-                    <span>Pendente</span>
-                  </>
-                )}
-              </button>
             </div>
           </div>
 
@@ -167,13 +172,18 @@ export default function TransactionsForm() {
               type="text"
               className="input bg-base-200 w-full"
               placeholder="Descreva a operação..."
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
+              value={state.description}
+              onChange={(e) => handleInputChange("description", e.target.value)}
             />
           </div>
 
           <button className="btn btn-primary w-full">Guardar</button>
-          <button className="btn btn-error btn-soft w-full">Cancelar</button>
+          <button
+            className="btn btn-error btn-soft w-full"
+            onClick={handleCloseForm}
+          >
+            Cancelar
+          </button>
         </div>
       </div>
     </div>

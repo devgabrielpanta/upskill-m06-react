@@ -1,15 +1,13 @@
 import { createContext, useContext, useState } from "react";
-import { initialTransactions } from "../utils/mockData";
+import { mockTransactionList } from "../utils/mockData";
 
 export const TransactionsContext = createContext(null);
 
 export default function TransactionsProvider({ children }) {
   const [transactionAction, setTransactionAction] = useState(null); // null | creating | editing | deleting
-  const [transactionList, setTransactionList] = useState(initialTransactions);
+  const [transactionList, setTransactionList] = useState(mockTransactionList);
   const [filteredTransactions, setFilteredTransactions] =
     useState(transactionList);
-
-  const [selectedTransaction, setSelectedTransaction] = useState(null); // null || {}
 
   return (
     <TransactionsContext.Provider
@@ -20,8 +18,7 @@ export default function TransactionsProvider({ children }) {
         setTransactionList,
         filteredTransactions,
         setFilteredTransactions,
-        selectedTransaction,
-        setSelectedTransaction,
+
       }}
     >
       {children}

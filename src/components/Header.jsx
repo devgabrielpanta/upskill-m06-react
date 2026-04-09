@@ -20,7 +20,7 @@ const NavItems = () => {
         <li key={`navitem-mobile-${index}`}>
           <NavLink
             to={item.route}
-            className={({ isActive }) => isActive && "underline"}
+            className={({ isActive }) => (isActive ? "underline" : "")}
           >
             {item.label}
           </NavLink>

@@ -1,4 +1,4 @@
-export const initialTransactions = [
+export const mockTransactionList = [
   {
     id: 1,
     description: "Salário de março",
@@ -6,7 +6,6 @@ export const initialTransactions = [
     type: "income",
     category: "Salário",
     date: "2024-03-25",
-    fulfilled: true,
   },
   {
     id: 2,
@@ -15,7 +14,6 @@ export const initialTransactions = [
     type: "expense",
     category: "Habitação",
     date: "2024-03-26",
-    fulfilled: true,
   },
   {
     id: 3,
@@ -24,7 +22,6 @@ export const initialTransactions = [
     type: "expense",
     category: "Alimentação",
     date: "2024-03-27",
-    fulfilled: true,
   },
   {
     id: 4,
@@ -33,7 +30,6 @@ export const initialTransactions = [
     type: "income",
     category: "Trabalho Extra",
     date: "2024-03-28",
-    fulfilled: true,
   },
   {
     id: 5,
@@ -42,7 +38,6 @@ export const initialTransactions = [
     type: "expense",
     category: "Serviços",
     date: "2024-03-29",
-    fulfilled: false,
   },
   {
     id: 6,
@@ -51,7 +46,6 @@ export const initialTransactions = [
     type: "expense",
     category: "Lazer",
     date: "2024-03-30",
-    fulfilled: true,
   },
   {
     id: 7,
@@ -60,7 +54,6 @@ export const initialTransactions = [
     type: "income",
     category: "Reembolsos",
     date: "2024-03-31",
-    fulfilled: true,
   },
   {
     id: 8,
@@ -69,6 +62,92 @@ export const initialTransactions = [
     type: "expense",
     category: "Saúde/Fitness",
     date: "2024-04-01",
-    fulfilled: false,
+  },
+];
+
+export const mockCategoryList = [
+  {
+    slug: "alimentacao",
+    label: "Alimentação",
+    labelEn: "Food & Dining",
+    color: "#F97316",
+    iconUrl: "/api/categories/alimentacao/icon",
+  },
+  {
+    slug: "transporte",
+    label: "Transporte",
+    labelEn: "Transportation",
+    color: "#3B82F6",
+    iconUrl: "/api/categories/transporte/icon",
+  },
+  {
+    slug: "saude",
+    label: "Saúde",
+    labelEn: "Health",
+    color: "#EF4444",
+    iconUrl: "/api/categories/saude/icon",
+  },
+  {
+    slug: "bem-estar",
+    label: "Bem-estar",
+    labelEn: "Wellness & Gym",
+    color: "#8B5CF6",
+    iconUrl: "/api/categories/bem-estar/icon",
+  },
+  {
+    slug: "habitacao",
+    label: "Habitação",
+    labelEn: "Housing & Rent",
+    color: "#10B981",
+    iconUrl: "/api/categories/habitacao/icon",
+  },
+  {
+    slug: "lazer",
+    label: "Lazer",
+    labelEn: "Entertainment",
+    color: "#F59E0B",
+    iconUrl: "/api/categories/lazer/icon",
+  },
+  {
+    slug: "compras",
+    label: "Compras",
+    labelEn: "Shopping",
+    color: "#EC4899",
+    iconUrl: "/api/categories/compras/icon",
+  },
+  {
+    slug: "educacao",
+    label: "Educação",
+    labelEn: "Education",
+    color: "#06B6D4",
+    iconUrl: "/api/categories/educacao/icon",
+  },
+  {
+    slug: "tecnologia",
+    label: "Tecnologia",
+    labelEn: "Technology",
+    color: "#6366F1",
+    iconUrl: "/api/categories/tecnologia/icon",
+  },
+  {
+    slug: "viagens",
+    label: "Viagens",
+    labelEn: "Travel",
+    color: "#14B8A6",
+    iconUrl: "/api/categories/viagens/icon",
+  },
+  {
+    slug: "restaurantes",
+    label: "Restaurantes",
+    labelEn: "Restaurants & Bars",
+    color: "#F97316",
+    iconUrl: "/api/categories/restaurantes/icon",
+  },
+  {
+    slug: "outro",
+    label: "Outro",
+    labelEn: "Other",
+    color: "#6B7280",
+    iconUrl: "/api/categories/outro/icon",
   },
 ];
