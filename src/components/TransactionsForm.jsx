@@ -1,4 +1,4 @@
-import { useReducer } from "react";
+import { useReducer, useState } from "react";
 import { useTransactions } from "../context/TransactionsProvider";
 import { TrendingUp, TrendingDown, ChevronDown } from "lucide-react";
 import { formattedAmountCurrency } from "../utils/dataTypeUtils";
@@ -8,7 +8,7 @@ const initialTransaction = {
   description: "",
   amount: formattedAmountCurrency(""),
   type: "income",
-  category: "Selecionar...",
+  category: null,
   date: new Date().toISOString().split("T")[0],
 };
 
@@ -22,8 +22,10 @@ function reducer(state, action) {
 }
 
 export default function TransactionsForm() {
-  const { transactionAction, setTransactionAction } = useTransactions();
+  const { transactionAction, setTransactionAction, categoryList } =
+    useTransactions();
   const [state, dispatch] = useReducer(reducer, initialTransaction);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
 
   // Dispatch reducer state changes
   const handleInputChange = (field, value) => {
@@ -34,6 +36,7 @@ export default function TransactionsForm() {
     }
 
     dispatch({ type: "setFieldValue", field, value: parsedValue });
+    setDropdownOpen(false);
   };
 
   // Return income or expense button based on the variant
@@ -53,6 +56,19 @@ export default function TransactionsForm() {
         {text}
       </button>
     );
+  };
+
+  const getCategoryLabel = () => {
+    let label = "";
+    if (state.category === null) {
+      label = "Selecionar...";
+    } else {
+      label =
+        categoryList.find((categ) => categ.slug === state.category)?.label ||
+        "";
+    }
+
+    return label;
   };
 
   const handleCloseForm = () => {
@@ -125,42 +141,29 @@ export default function TransactionsForm() {
             <div className="flex flex-col gap-2 text-xs font-medium">
               Categoria
               <div className="dropdown">
-                <div
-                  tabIndex={0}
-                  role="button"
-                  className="input m-1 flex justify-between items-center bg-base-200"
+                <button
+                  className="relative input m-1 flex justify-between items-center bg-base-200"
+                  onClick={() => setDropdownOpen(true)}
                 >
-                  <span>{state.category}</span>
+                  <span>{getCategoryLabel()}</span>
                   <ChevronDown />
-                </div>
-                <ul
-                  tabIndex="-1"
-                  className="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm"
-                >
-                  <li>
-                    <a
-                      onClick={() =>
-                        handleInputChange("category", "Transporte")
-                      }
-                    >
-                      Transporte
-                    </a>
-                  </li>
-                  <li>
-                    <a onClick={() => handleInputChange("category", "Aluguel")}>
-                      Aluguel
-                    </a>
-                  </li>
-                  <li>
-                    <a
-                      onClick={() =>
-                        handleInputChange("category", "Alimentação")
-                      }
-                    >
-                      Alimentação
-                    </a>
-                  </li>
-                </ul>
+                </button>
+                {dropdownOpen && (
+                  <ul className="absolute top-0 dropdown-content bg-base-200 rounded-box z-10 w-40 p-2 shadow-sm flex flex-col gap-2 h-50 overflow-y-scroll">
+                    {categoryList.map((categ) => (
+                      <li key={`categ-selector-${categ.slug}`}>
+                        <button
+                          className="btn btn-soft btn-xs w-full text-left"
+                          onClick={() =>
+                            handleInputChange("category", categ.slug)
+                          }
+                        >
+                          <span>{categ.label}</span>
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                )}
               </div>
             </div>
           </div>
