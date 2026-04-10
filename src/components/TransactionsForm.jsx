@@ -1,7 +1,8 @@
 import { useReducer, useState } from "react";
 import { useTransactions } from "../context/TransactionsProvider";
-import { TrendingUp, TrendingDown, ChevronDown } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 import { formattedAmountCurrency } from "../utils/dataTypeUtils";
+import BtnTransactionType from "./BtnTransactionType";
 
 const initialTransaction = {
   id: null,
@@ -39,25 +40,6 @@ export default function TransactionsForm() {
     setDropdownOpen(false);
   };
 
-  // Return income or expense button based on the variant
-  const renderButton = (variant) => {
-    const type = state.type;
-    const isIncome = variant === "income";
-    const Icon = isIncome ? TrendingUp : TrendingDown;
-    const colorClass = isIncome ? "btn-success" : "btn-error";
-    const text = isIncome ? "Receita" : "Despesa";
-
-    return (
-      <button
-        className={`btn btn-soft btn-xs ${colorClass} ${type === variant ? "opacity-100 shadow-md" : "opacity-40"}`}
-        onClick={() => handleInputChange("type", variant)}
-      >
-        <Icon />
-        {text}
-      </button>
-    );
-  };
-
   const getCategoryLabel = () => {
     let label = "";
     if (state.category === null) {
@@ -76,15 +58,7 @@ export default function TransactionsForm() {
     dispatch({ type: "setInitialData", payload: initialTransaction });
   };
 
-  if (!transactionAction)
-    return (
-      <button
-        className="fixed top-2 right-2 z-10 btn btn-sm btn-primary"
-        onClick={() => setTransactionAction("creating")}
-      >
-        Adicionar Transação
-      </button>
-    );
+  if (!transactionAction) return null;
 
   return (
     <div className="fixed top-0 right-0 w-screen min-w-screen h-screen min-h-screen z-40 flex items-center justify-center">
@@ -127,8 +101,8 @@ export default function TransactionsForm() {
             <div className="flex flex-col gap-2 text-xs font-medium">
               Tipo
               <div className="input bg-base-200">
-                {renderButton("income")}
-                {renderButton("expense")}
+                <BtnTransactionType variant="income" active={state.type === "income"} onClickFn={() => handleInputChange("type", "income")} />
+                <BtnTransactionType variant="expense" active={state.type === "expense"} onClickFn={() => handleInputChange("type", "expense")} />
               </div>
             </div>
           </div>

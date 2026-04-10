@@ -1,5 +1,6 @@
 import { NavLink } from "react-router";
 import { Menu } from "lucide-react";
+import { useTransactions } from "../context/TransactionsProvider";
 
 const routeMap = [
   {
@@ -30,6 +31,7 @@ const NavItems = () => {
 };
 
 export default function Header({ children }) {
+  const { setTransactionAction } = useTransactions();
 
   return (
     <div className="drawer lg:drawer-open bg-base-100">
@@ -43,7 +45,6 @@ export default function Header({ children }) {
           <h1 className="text-xl font-bold">Logo Here</h1>
         </header>
         {children}
-        
       </div>
 
       <div className="drawer-side">
@@ -53,12 +54,20 @@ export default function Header({ children }) {
           className="drawer-overlay"
         ></label>
 
-        <div className="min-h-full w-80 p-4 bg-base-200 flex flex-col justify-between gap-10">
+        <div className="min-h-full w-80 p-4 bg-base-300 flex flex-col justify-between gap-10">
           <h1 className="text-xl font-bold">Logo Here</h1>
           <ul className="menu h-full flex-1 items-start justify-start">
             <NavItems />
           </ul>
-          <div>toggle theme</div>
+          <div className="flex flex-col w-full items-center gap-2">
+            <button
+              className="btn btn-sm btn-primary btn-wide"
+              onClick={() => setTransactionAction("creating")}
+            >
+              Adicionar Transação
+            </button>
+            <span>toggle theme</span>
+          </div>
         </div>
       </div>
     </div>
