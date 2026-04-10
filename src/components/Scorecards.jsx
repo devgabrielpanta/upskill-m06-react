@@ -1,70 +1,40 @@
-import React from "react";
+import { Wallet, TrendingUp, TrendingDown } from "lucide-react";
+
+const cardData = [
+  {
+    title: "Saldo atual",
+    value: "€ 1.500",
+    desc: "Disponível em conta",
+    icon: <Wallet size={28} />,
+    color: "text-primary",
+  },
+  {
+    title: "Receitas",
+    value: "€ 4.300",
+    desc: "↗︎ 400 (22%) mês passado",
+    icon: <TrendingUp size={28} />,
+    color: "text-success",
+  },
+  {
+    title: "Despesas",
+    value: "€ 2.800",
+    desc: "↘︎ 90 (14%) mês passado",
+    icon: <TrendingDown size={28} />,
+    color: "text-error",
+  },
+];
 
 export default function Scorecards() {
   return (
     <>
-      <div className="stat">
-        <div className="stat-figure text-primary">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            className="inline-block w-8 h-8 stroke-current"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"
-            ></path>
-          </svg>
+      {cardData.map((card, index) => (
+        <div key={`card-${index}`} className="stat">
+          <div className={`stat-figure ${card.color}`}>{card.icon}</div>
+          <div className="stat-title">{card.title}</div>
+          <div className={`stat-value ${card.color}`}>{card.value}</div>
+          <div className={`stat-desc ${card.color}`}>{card.desc}</div>
         </div>
-        <div className="stat-title">Saldo atual</div>
-        <div className="stat-value text-primary">€ 1.500</div>
-        <div className="stat-desc">Disponível em conta</div>
-      </div>
-
-      <div className="stat">
-        <div className="stat-figure text-success">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            className="inline-block w-8 h-8 stroke-current"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
-            ></path>
-          </svg>
-        </div>
-        <div className="stat-title">Receitas</div>
-        <div className="stat-value text-success">€ 4.300</div>
-        <div className="stat-desc text-success">↗︎ 400 (22%) mês passado</div>
-      </div>
-
-      <div className="stat">
-        <div className="stat-figure text-error">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            className="inline-block w-8 h-8 stroke-current"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6"
-            ></path>
-          </svg>
-        </div>
-        <div className="stat-title">Despesas</div>
-        <div className="stat-value text-error">€ 2.800</div>
-        <div className="stat-desc text-error">↘︎ 90 (14%) mês passado</div>
-      </div>
+      ))}
     </>
   );
 }
