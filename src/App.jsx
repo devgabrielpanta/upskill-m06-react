@@ -1,6 +1,3 @@
-import Header from "./components/Header";
-import Feedback from "./components/Feedback";
-import Loading from "./components/Loading";
 import TransactionsProvider from "./context/TransactionsProvider";
 import { Routes, Route } from "react-router";
 import Transactions from "./pages/Transactions";
