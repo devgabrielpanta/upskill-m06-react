@@ -1,21 +1,22 @@
 import TransactionCard from "../components/TransactionCard";
 import TransactionsController from "../components/TransactionsController";
 import { useTransactions } from "../context/TransactionsProvider";
+import Scorecards from "../components/Scorecards";
 
 export default function Transactions() {
   const { filteredTransactions } = useTransactions();
 
   return (
-    <div className="flex flex-col md:flex-row w-full h-full p-8 gap-4">
-      <div className="grid grid-cols-3 md:grid-cols-1 w-full md:w-1/3">
-        <p>Saldo</p>
-        <p>Receita total</p>
-        <p>Despesa total</p>
+    <div className="flex flex-col md:flex-row w-full h-full max-h-screen p-8 gap-10 overflow-y-auto md:overflow-clip">
+      <div className="w-full md:w-1/4 h-full md:h-[80%] md:my-auto">
+        <div className="stats stats-vertical shadow-md shadow-info w-full h-full md:my-auto border border-info-content">
+          <Scorecards />
+        </div>
       </div>
 
       <div className="flex flex-col">
         <TransactionsController />
-        <div className="flex flex-col gap-4 w-full h-[calc(100vh-15%)] overflow-y-auto pb-10">
+        <div className="flex flex-col gap-4 w-full pb-10 md:overflow-y-auto h-full">
           {filteredTransactions &&
             filteredTransactions.length > 0 &&
             filteredTransactions.map((transaction) => (
