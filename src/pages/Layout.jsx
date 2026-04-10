@@ -6,27 +6,16 @@ import TransactionsForm from "../components/TransactionsForm";
 
 export default function Layout() {
   return (
-    <div className="relative flex flex-col w-screen min-w-screen h-screen min-h-screen bg-base-200">
-      <Header />
-
-      <main>
+    <div className="w-screen min-w-screen max-w-screen h-screen min-h-screen max-h-screen overflow-clip bg-base-200">
+      <Header>
         <Outlet />
-      </main>
+      </Header>
 
       <aside>
         <TransactionsForm />
         <Feedback />
         <Loading />
       </aside>
-
-      <footer className="absolute bottom-0 footer sm:footer-horizontal footer-center bg-base-100 text-base-content p-4">
-        <aside>
-          <p>
-            Copyright © {new Date().getFullYear()} - All right reserved by ACME
-            Industries Ltd
-          </p>
-        </aside>
-      </footer>
     </div>
   );
 }

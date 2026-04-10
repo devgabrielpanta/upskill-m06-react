@@ -1,7 +1,5 @@
-import React from 'react'
+import React from "react";
 
 export default function TransactionsController() {
-  return (
-    <div>TransactionsController</div>
-  )
+  return <div className="">TransactionsController</div>;
 }

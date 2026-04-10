@@ -76,12 +76,20 @@ export default function TransactionsForm() {
     dispatch({ type: "setInitialData", payload: initialTransaction });
   };
 
-  if (!transactionAction) return null;
+  if (!transactionAction)
+    return (
+      <button
+        className="fixed top-2 right-2 z-10 btn btn-sm btn-primary"
+        onClick={() => setTransactionAction("creating")}
+      >
+        Adicionar Transação
+      </button>
+    );
 
   return (
     <div className="fixed top-0 right-0 w-screen min-w-screen h-screen min-h-screen z-40 flex items-center justify-center">
       <div
-        className="absolute w-full h-full bg-neutral/40 z-40"
+        className="absolute w-full h-full bg-neutral/50 backdrop-blur-xs z-40"
         onClick={handleCloseForm}
       ></div>
       <div className="flex flex-col bg-base-100 z-50 rounded-lg w-[90vw] lg:w-fit p-4">

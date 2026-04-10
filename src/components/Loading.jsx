@@ -1,7 +1,9 @@
-import React from 'react'
+import React from "react";
 
 export default function Loading() {
-  return (
-    <div>Loading</div>
-  )
+  const display = false; // To be replaced by app loading state.
+
+  if (!display) return null;
+
+  return <div>Loading</div>;
 }

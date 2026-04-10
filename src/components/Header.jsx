@@ -1,4 +1,3 @@
-import { useTransactions } from "../context/TransactionsProvider";
 import { NavLink } from "react-router";
 import { Menu } from "lucide-react";
 
@@ -30,42 +29,38 @@ const NavItems = () => {
   );
 };
 
-export default function Header() {
-  const { setTransactionAction } = useTransactions();
+export default function Header({ children }) {
 
   return (
-    <header className="navbar bg-base-100 shadow-sm">
-      {/* LEFT  */}
-      <div className="navbar-start">
-        <nav className="dropdown">
-          <div tabIndex={0} role="button" className="btn btn-ghost lg:hidden">
+    <div className="drawer lg:drawer-open bg-base-100">
+      <input id="my-drawer-3" type="checkbox" className="drawer-toggle" />
+      <div className="drawer-content flex flex-col w-full h-full items-center justify-center">
+        {/* Page content here */}
+        <header className="flex flex-row w-full items-center gap-2 lg:hidden">
+          <label htmlFor="my-drawer-3" className="btn btn-ghost drawer-button">
             <Menu />
-          </div>
-          {/* MOBILE MENU */}
-          <ul
-            tabIndex="-1"
-            className="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow"
-          >
+          </label>
+          <h1 className="text-xl font-bold">Logo Here</h1>
+        </header>
+        {children}
+        
+      </div>
+
+      <div className="drawer-side">
+        <label
+          htmlFor="my-drawer-3"
+          aria-label="close sidebar"
+          className="drawer-overlay"
+        ></label>
+
+        <div className="min-h-full w-80 p-4 bg-base-200 flex flex-col justify-between gap-10">
+          <h1 className="text-xl font-bold">Logo Here</h1>
+          <ul className="menu h-full flex-1 items-start justify-start">
             <NavItems />
           </ul>
-        </nav>
-        <h1 className="text-xl font-bold">Logo Here</h1>
+          <div>toggle theme</div>
+        </div>
       </div>
-      {/* CENTER - DESKTOP MENU */}
-      <nav className="navbar-center hidden lg:flex">
-        <ul className="menu menu-horizontal px-1">
-          <NavItems />
-        </ul>
-      </nav>
-      {/* RIGHT  */}
-      <div className="navbar-end">
-        <button
-          className="btn btn-primary btn-sm"
-          onClick={() => setTransactionAction("creating")}
-        >
-          Adicionar Transação
-        </button>
-      </div>
-    </header>
+    </div>
   );
 }

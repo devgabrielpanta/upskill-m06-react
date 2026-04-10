@@ -1,7 +1,6 @@
-import React from 'react'
-
 export default function Feedback() {
-  return (
-    <div>Feedback</div>
-  )
+  const display = false; // To be replaced by app feedback state.
+
+  if (!display) return null;
+  return <div>Feedback</div>;
 }
