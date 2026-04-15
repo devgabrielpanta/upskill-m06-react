@@ -10,6 +10,10 @@ import {
 } from "lucide-react";
 import BtnTransactionType from "./BtnTransactionType";
 import { useTransactions } from "../context/TransactionsProvider";
+import {
+  defaultTransactionParams,
+  sortFilterTransaction,
+} from "../services/transaction.service";
 
 const sortOrderOptions = [
   { order: "asc", icon: ArrowUp },
@@ -18,17 +22,9 @@ const sortOrderOptions = [
 
 const sortByOptions = [
   { sortBy: "date", label: "Data", icon: Calendar },
-  { sortBy: "value", label: "Valor", icon: Banknote },
+  { sortBy: "amount", label: "Valor", icon: Banknote },
   { sortBy: "category", label: "Categoria", icon: Tag },
 ];
-
-const initialState = {
-  search: "",
-  sortBy: "date",
-  sortOrder: "asc",
-  filterType: "all", // all | income | expense
-  selectedCategories: [],
-};
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -51,14 +47,15 @@ const reducer = (state, action) => {
       };
     }
     case "reset":
-      return initialState;
+      return defaultTransactionParams;
   }
 };
 
 export default function TransactionsController() {
-  const [state, dispatch] = useReducer(reducer, initialState);
+  const [state, dispatch] = useReducer(reducer, defaultTransactionParams);
   const [openController, setOpenController] = useState(false);
-  const { categoryList } = useTransactions();
+  const { categoryList, setFilteredTransactions, transactionList } =
+    useTransactions();
 
   // Handle side bar visibility based on window width (visible by default on desktop, hidden on mobile)
   useEffect(() => {
@@ -75,10 +72,16 @@ export default function TransactionsController() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
+  const handleController = () => {
+    const updatedList = sortFilterTransaction(state, transactionList);
+    setFilteredTransactions(updatedList);
+  };
+
   useEffect(() => {
-    // pendente: implementar lógica para afetar a exibição transações
+    handleController();
   }, [state]);
 
+  // Return a reausable search which mutate the state
   const renderSearchBar = () => (
     <label className="input">
       <Search size={16} />
@@ -93,6 +96,17 @@ export default function TransactionsController() {
       />
     </label>
   );
+
+  const getCategoryLabel = () => {
+    switch (state.selectedCategories.length) {
+      case 0:
+        return "(todas)";
+      case 1:
+        return "(1 selecionada)";
+      default:
+        return `(${state.selectedCategories.length} selecionadas)`;
+    }
+  };
 
   if (!openController) {
     return (
@@ -118,10 +132,7 @@ export default function TransactionsController() {
       </button>
 
       {/* SEARCH */}
-      <div className="hidden md:flex w-full">
-        {renderSearchBar()}
-      </div>
-
+      <div className="hidden md:flex w-full">{renderSearchBar()}</div>
 
       <div className="divider my-4"></div>
 
@@ -134,6 +145,7 @@ export default function TransactionsController() {
           <div className="flex bg-base-100 rounded-md overflow-hidden">
             {sortOrderOptions.map((item) => (
               <button
+                key={`sort-button-${item.order}`}
                 className={`btn btn-square btn-xs btn-soft rounded-none
                   ${String(state.sortOrder) === String(item.order) ? "btn-info opacity-100" : "btn-default opacity-50"}`}
                 onClick={() =>
@@ -200,7 +212,12 @@ export default function TransactionsController() {
 
         {/* CATEGORIES */}
         <div className="flex flex-col gap-3 mt-4">
-          <span className="text-xs font-semibold mb-1">Categorias</span>
+          <div className="flex justify-between items-center mb-2">
+            <span className="text-xs font-semibold">Categorias</span>
+            <span className="text-info text-xs font-semibold">
+              {getCategoryLabel()}
+            </span>
+          </div>
 
           <div className="grid grid-cols-3 space-y-2">
             {categoryList.map((category) => (

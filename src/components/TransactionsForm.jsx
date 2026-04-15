@@ -101,8 +101,16 @@ export default function TransactionsForm() {
             <div className="flex flex-col gap-2 text-xs font-medium">
               Tipo
               <div className="input bg-base-200">
-                <BtnTransactionType variant="income" active={state.type === "income"} onClickFn={() => handleInputChange("type", "income")} />
-                <BtnTransactionType variant="expense" active={state.type === "expense"} onClickFn={() => handleInputChange("type", "expense")} />
+                <BtnTransactionType
+                  variant="income"
+                  active={state.type === "income"}
+                  onClickFn={() => handleInputChange("type", "income")}
+                />
+                <BtnTransactionType
+                  variant="expense"
+                  active={state.type === "expense"}
+                  onClickFn={() => handleInputChange("type", "expense")}
+                />
               </div>
             </div>
           </div>

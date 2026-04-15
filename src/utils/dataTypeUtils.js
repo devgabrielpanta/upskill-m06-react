@@ -1,60 +1,46 @@
+// Utility function to analyze string chars (eg: includes)
+export function normalizeStringCharacters(string) {
+  return String(string)
+    .normalize("NFD") // Splits accented characters (e.g., 'á' -> 'a' + '´')
+    .replace(/[\u0300-\u036f]/g, "") // Removes the standalone accent marks
+    .toLowerCase() // Converts to lowercase
+    .replace(/\s+/g, ""); // Removes all whitespace (spaces, tabs, newlines)
+}
+
 export function formattedAmountCurrency(stringOrInteger) {
-  const stringDigits = getStringNumberChars(stringOrInteger);
-
-  const amountNumber = parseNonDecimalAmount(stringDigits);
-  const amountDecimal = parseDecimalAmount(stringDigits);
-
-  return "€ " + amountNumber + "," + amountDecimal;
+  if (typeof stringOrInteger === "number") {
+    return formatNumericAmount(stringOrInteger);
+  }
+  return formatStringAmount(stringOrInteger);
 }
 
 // ====================================================================
 //                           Helper Functions
 // ====================================================================
-
-function getStringNumberChars(stringOrInteger) {
-  const amountString = String(stringOrInteger);
-  const regexNumbers = /^\d+$/;
-
-  let stringDigits = "";
-
-  for (let index = 0; index <= amountString.length; index++) {
-    const char = String(amountString.charAt(index));
-    if (regexNumbers.test(char)) {
-      stringDigits = String(stringDigits) + char;
-    }
-  }
-
-  return stringDigits;
+function formatNumericAmount(num) {
+  const integerPart = getIntegerPart(num);
+  const decimalPart = getDecimalPart(num);
+  return `€ ${integerPart},${decimalPart}`;
 }
 
-function parseNonDecimalAmount(stringDigits) {
-  let amountNumber = stringDigits.slice(0, stringDigits.length - 2);
+function formatStringAmount(str) {
+  const digits = String(str).replace(/\D/g, "");
+  if (!digits) return "€ 0,00";
 
-  switch (amountNumber.length) {
-    case 0:
-      amountNumber = "0";
-      break;
-    default:
-      amountNumber = String(Number(amountNumber));
-  }
+  const normalized = digits.replace(/^0+/, "") || "0";
+  if (normalized === "0") return "€ 0,00";
 
-  return amountNumber;
+  const padded = normalized.padStart(3, "0");
+  const intPart = padded.slice(0, -2);
+  const decPart = padded.slice(-2);
+  return `€ ${intPart},${decPart}`;
 }
 
-function parseDecimalAmount(stringDigits) {
-  let amountDecimal = stringDigits.slice(
-    stringDigits.length - 2,
-    stringDigits.length,
-  );
+function getIntegerPart(num) {
+  return String(Math.floor(Math.abs(num)));
+}
 
-  switch (amountDecimal.length) {
-    case 0:
-      amountDecimal = "00";
-      break;
-    case 1:
-      amountDecimal = `0${amountDecimal}`;
-      break;
-  }
-
-  return amountDecimal;
+function getDecimalPart(num) {
+  const decimal = Math.round((Math.abs(num) % 1) * 100);
+  return String(decimal).padStart(2, "0");
 }
