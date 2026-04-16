@@ -8,6 +8,15 @@ export const defaultTransactionParams = {
   selectedCategories: [],
 };
 
+export const initialTransactionData = {
+  id: null,
+  description: "",
+  amount: 0,
+  type: "income",
+  category: null,
+  date: new Date().toISOString().split("T")[0],
+};
+
 /**
  * @param {Object} params - search, sortBy, sortOrder, filterType, selectedCategories
  * @param {Array} filteredTransactions - Array of transaction objects.

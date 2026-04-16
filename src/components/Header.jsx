@@ -31,7 +31,7 @@ const NavItems = () => {
 };
 
 export default function Header({ children }) {
-  const { setTransactionAction } = useTransactions();
+  const { dispatch } = useTransactions();
 
   return (
     <div className="drawer lg:drawer-open bg-base-100">
@@ -62,7 +62,9 @@ export default function Header({ children }) {
           <div className="flex flex-col w-full items-center gap-2">
             <button
               className="btn btn-sm btn-primary btn-wide"
-              onClick={() => setTransactionAction("creating")}
+              onClick={() =>
+                dispatch({ type: "setTransactionAction", value: "creating" })
+              }
             >
               Adicionar Transação
             </button>

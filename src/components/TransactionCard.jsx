@@ -1,12 +1,20 @@
 import { Pencil, Trash, EllipsisVertical, X } from "lucide-react";
 import { formattedAmountCurrency } from "../utils/dataTypeUtils";
 import { useState } from "react";
+import { useTransactions } from "../context/TransactionsProvider";
 
 export default function TransactionCard({ transaction }) {
   const [openMenu, setOpenMenu] = useState(false);
+  const { dispatch } = useTransactions();
 
   const toggleMenuOpen = () => {
     setOpenMenu(!openMenu);
+  };
+
+  const handleStartEditing = () => {
+    dispatch({ type: "setTransactionAction", value: "editing" });
+    dispatch({ type: "setTransactionData", value: transaction });
+    toggleMenuOpen();
   };
 
   return (
@@ -47,7 +55,10 @@ export default function TransactionCard({ transaction }) {
         </button>
         {openMenu && (
           <div className="absolute right-0 top-full mt-1 z-20 flex flex-col gap-2 bg-base-200 p-2 rounded shadow">
-            <button className="btn btn-xs flex flex-row gap-2 items-center text-primary">
+            <button
+              className="btn btn-xs flex flex-row gap-2 items-center text-primary"
+              onClick={handleStartEditing}
+            >
               <Pencil size={10} />
               <span className="text-xs">Editar</span>
             </button>

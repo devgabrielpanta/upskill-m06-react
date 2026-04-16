@@ -1,8 +1,12 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useReducer } from "react";
 import { mockCategoryList } from "../utils/mockData";
-import { createTransaction } from "../services/transaction.api";
+import {
+  getTransactions,
+  createTransaction,
+  updateTransaction,
+} from "../services/transaction.api";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
-import { getTransactions } from "../services/transaction.api";
+import { initialTransactionData } from "../services/transaction.service";
 
 const sortedCategoryList = mockCategoryList.sort((a, b) => {
   const isAOutros = String(a.label).toLowerCase() === "outro";
@@ -15,47 +19,102 @@ const sortedCategoryList = mockCategoryList.sort((a, b) => {
   return String(a.label).localeCompare(b.label);
 });
 
+const initialState = {
+  transactionAction: null, // null | creating | editing | deleting
+  transactionList: [],
+  filteredTransactions: [],
+  categoryList: sortedCategoryList,
+  transactionData: initialTransactionData,
+};
+
+function reducer(state, action) {
+  switch (action.type) {
+    case "setInitialData":
+      return (state = { ...state, transactionData: initialTransactionData });
+    case "setTransactionData":
+      return (state = { ...state, transactionData: action.value });
+    case "setFieldValue":
+      return (state = {
+        ...state,
+        transactionData: {
+          ...state.transactionData,
+          [action.field]: action.value,
+        },
+      });
+    case "setTransactionAction":
+      return (state = { ...state, transactionAction: action.value });
+    case "setTransactionList":
+      return (state = { ...state, transactionList: action.value });
+    case "setFilteredTransactions":
+      return (state = { ...state, filteredTransactions: action.value });
+    case "setCategoryList":
+      return (state = { ...state, categoryList: action.value });
+    default:
+      return state;
+  }
+}
+
 export const TransactionsContext = createContext(null);
 
 export default function TransactionsProvider({ children }) {
+  const queryClient = useQueryClient();
+  const [state, dispatch] = useReducer(reducer, initialState);
+
   // fetch transactions with react-query
   const { data: transactionList } = useQuery({
     queryKey: ["transactionsList"],
     queryFn: getTransactions,
+    onSuccess: (data) => {
+      dispatch({ type: "setTransactionList", value: data });
+    },
   });
 
-  const [transactionAction, setTransactionAction] = useState(null); // null | creating | editing | deleting
-  const [categoryList, setCategoryList] = useState(sortedCategoryList);
-  const [filteredTransactions, setFilteredTransactions] =
-    useState(transactionList);
-
-  const queryClient = useQueryClient();
-
+  // set filtered transactions based on transaction list changes
   useEffect(() => {
-    setFilteredTransactions(transactionList);
+    dispatch({ type: "setFilteredTransactions", value: transactionList || [] });
   }, [transactionList]);
+
+  // reset transactionData to initialState when transactionAction is set to null /deleting one.
+  useEffect(() => {
+    if (state.transactionAction === null) {
+      dispatch({ type: "setInitialData" });
+    }
+  }, [state.transactionAction]);
 
   const createMutation = useMutation({
     mutationFn: (payload) => createTransaction(payload),
     onSuccess: (newTransaction) => {
       queryClient.setQueryData(["transactionsList"], (oldTransactions) => [
-        ...oldTransactions,
         newTransaction,
+        ...oldTransactions,
       ]);
+
+      dispatch({ type: "setTransactionAction", value: null });
+    },
+  });
+
+  const updateMutation = useMutation({
+    mutationFn: (payload) => updateTransaction(payload),
+    onSuccess: (updatedTransaction) => {
+      queryClient.setQueryData(["transactionsList"], (oldTransactions) => [
+        updatedTransaction,
+        ...oldTransactions.filter(
+          (transaction) => transaction.id !== updatedTransaction.id,
+        ),
+      ]);
+
+      dispatch({ type: "setTransactionAction", value: null });
     },
   });
 
   return (
     <TransactionsContext.Provider
       value={{
-        transactionAction,
-        setTransactionAction,
+        ...state,
+        dispatch,
         transactionList,
-        filteredTransactions,
-        setFilteredTransactions,
-        categoryList,
-        setCategoryList,
         createMutation,
+        updateMutation,
       }}
     >
       {children}

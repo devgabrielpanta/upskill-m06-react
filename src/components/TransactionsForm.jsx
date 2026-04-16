@@ -1,4 +1,4 @@
-import { useReducer, useState } from "react";
+import { useState } from "react";
 import { useTransactions } from "../context/TransactionsProvider";
 import { ChevronDown } from "lucide-react";
 import {
@@ -7,32 +7,16 @@ import {
 } from "../utils/dataTypeUtils";
 import BtnTransactionType from "./BtnTransactionType";
 
-const initialTransaction = {
-  id: null,
-  description: "",
-  amount: formattedAmountCurrency(""),
-  type: "income",
-  category: null,
-  date: new Date().toISOString().split("T")[0],
-};
-
-function reducer(state, action) {
-  switch (action.type) {
-    case "setInitialData":
-      return (state = action.payload);
-    case "setFieldValue":
-      return (state = { ...state, [action.field]: action.value });
-  }
-}
-
 export default function TransactionsForm() {
   const {
     transactionAction,
-    setTransactionAction,
+    transactionData,
     categoryList,
+    dispatch,
     createMutation,
+    updateMutation,
   } = useTransactions();
-  const [state, dispatch] = useReducer(reducer, initialTransaction);
+
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
   // Dispatch reducer state changes
@@ -49,33 +33,34 @@ export default function TransactionsForm() {
 
   const getCategoryLabel = () => {
     let label = "";
-    if (state.category === null) {
+    if (transactionData.category === null) {
       label = "Selecionar...";
     } else {
       label =
-        categoryList.find((categ) => categ.slug === state.category)?.label ||
-        "";
+        categoryList.find((categ) => categ.slug === transactionData.category)
+          ?.label || "";
     }
 
     return label;
   };
 
   const handleCloseForm = () => {
-    setTransactionAction(null);
-    dispatch({ type: "setInitialData", payload: initialTransaction });
+    dispatch({ type: "setTransactionAction", value: null });
   };
 
   const handleSubmit = () => {
     const payload = {
-      ...state,
+      ...transactionData,
       amount:
-        state.type === "income"
-          ? formattedAmountNumber(state.amount)
-          : formattedAmountNumber(state.amount) * -1,
+        transactionData.type === "income"
+          ? formattedAmountNumber(transactionData.amount)
+          : formattedAmountNumber(transactionData.amount) * -1,
     };
     switch (transactionAction) {
       case "creating":
         return createMutation.mutate(payload);
+      case "editing":
+        return updateMutation.mutate(payload);
     }
   };
 
@@ -111,9 +96,9 @@ export default function TransactionsForm() {
               Valor
               <input
                 type="text"
-                className={`input bg-base-200 ${state.type === "income" ? "text-green-600" : "text-red-600"}`}
+                className={`input bg-base-200 ${transactionData.type === "income" ? "text-green-600" : "text-red-600"}`}
                 placeholder="0.00 €"
-                value={state.amount}
+                value={formattedAmountCurrency(transactionData.amount)}
                 onChange={(e) => handleInputChange("amount", e.target.value)}
               />
             </div>
@@ -124,12 +109,12 @@ export default function TransactionsForm() {
               <div className="input bg-base-200">
                 <BtnTransactionType
                   variant="income"
-                  active={state.type === "income"}
+                  active={transactionData.type === "income"}
                   onClickFn={() => handleInputChange("type", "income")}
                 />
                 <BtnTransactionType
                   variant="expense"
-                  active={state.type === "expense"}
+                  active={transactionData.type === "expense"}
                   onClickFn={() => handleInputChange("type", "expense")}
                 />
               </div>
@@ -143,7 +128,7 @@ export default function TransactionsForm() {
               <input
                 type="date"
                 className="input bg-base-200"
-                value={state.date}
+                value={transactionData.date}
                 onChange={(e) => handleInputChange("date", e.target.value)}
               />
             </div>
@@ -186,7 +171,7 @@ export default function TransactionsForm() {
               type="text"
               className="input bg-base-200 w-full"
               placeholder="Descreva a operação..."
-              value={state.description}
+              value={transactionData.description}
               onChange={(e) => handleInputChange("description", e.target.value)}
             />
           </div>

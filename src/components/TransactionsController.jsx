@@ -54,8 +54,11 @@ const reducer = (state, action) => {
 export default function TransactionsController() {
   const [state, dispatch] = useReducer(reducer, defaultTransactionParams);
   const [openController, setOpenController] = useState(false);
-  const { categoryList, setFilteredTransactions, transactionList } =
-    useTransactions();
+  const {
+    categoryList,
+    transactionList,
+    dispatch: dispatchTransactions,
+  } = useTransactions();
 
   // Handle side bar visibility based on window width (visible by default on desktop, hidden on mobile)
   useEffect(() => {
@@ -74,7 +77,10 @@ export default function TransactionsController() {
 
   const handleController = () => {
     const updatedList = sortFilterTransaction(state, transactionList);
-    setFilteredTransactions(updatedList);
+    dispatchTransactions({
+      type: "setFilteredTransactions",
+      value: updatedList,
+    });
   };
 
   useEffect(() => {
