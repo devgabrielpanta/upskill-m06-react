@@ -18,9 +18,14 @@ export default function Transactions() {
         </>
       );
 
-    return filteredTransactions.map((transaction) => (
-      <TransactionCard key={transaction.id} transaction={transaction} />
-    ));
+    return filteredTransactions.map((transaction) => {
+      if (typeof transaction === "undefined") {
+        console.log("Transaction without id:", transaction);
+        return null; // Skip rendering this transaction
+      }
+
+      return <TransactionCard key={transaction.id} transaction={transaction} />;
+    });
   };
 
   return (

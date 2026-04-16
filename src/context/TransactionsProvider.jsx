@@ -8,6 +8,7 @@ import {
 } from "../services/transaction.api";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { initialTransactionData } from "../services/transaction.service";
+import { useApp } from "./AppProvider";
 
 const sortedCategoryList = mockCategoryList.sort((a, b) => {
   const isAOutros = String(a.label).toLowerCase() === "outro";
@@ -60,6 +61,7 @@ export const TransactionsContext = createContext(null);
 export default function TransactionsProvider({ children }) {
   const queryClient = useQueryClient();
   const [state, dispatch] = useReducer(reducer, initialState);
+  const { setResult, setMessage } = useApp();
 
   // fetch transactions with react-query
   const { data: transactionList } = useQuery({
@@ -91,6 +93,13 @@ export default function TransactionsProvider({ children }) {
       ]);
 
       dispatch({ type: "setTransactionAction", value: null });
+      setResult("success");
+      setMessage("Transação criada com sucesso!");
+    },
+    onError: (error) => {
+      console.error("Error creating transaction:", error);
+      setResult("error");
+      setMessage("Erro ao criar a transação.");
     },
   });
 
@@ -105,6 +114,13 @@ export default function TransactionsProvider({ children }) {
       ]);
 
       dispatch({ type: "setTransactionAction", value: null });
+      setResult("success");
+      setMessage("Transação atualizada com sucesso!");
+    },
+    onError: (error) => {
+      console.error("Error updating transaction:", error);
+      setResult("error");
+      setMessage("Erro ao atualizar a transação.");
     },
   });
 
@@ -118,6 +134,13 @@ export default function TransactionsProvider({ children }) {
       ]);
 
       dispatch({ type: "setTransactionAction", value: null });
+      setResult("success");
+      setMessage("Transação deletada com sucesso!");
+    },
+    onError: (error) => {
+      console.error("Error deleting transaction:", error);
+      setResult("error");
+      setMessage("Erro ao deletar a transação.");
     },
   });
 
