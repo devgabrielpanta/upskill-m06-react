@@ -20,7 +20,7 @@ export default function TransactionCard({ transaction }) {
   return (
     <div
       key={`transaction-card-${transaction.id}`}
-      className="relative card bg-base-200 shadow-md p-4 flex flex-row justify-between items-center gap-4 md:max-w-6xl"
+      className="relative card bg-base-200 shadow-sm shadow-neutral border border-neutral p-4 flex flex-row justify-between items-center gap-4 md:max-w-6xl"
     >
       <div className="w-4">
         <img
@@ -38,7 +38,7 @@ export default function TransactionCard({ transaction }) {
         </span>
       </div>
 
-      <div className="flex flex-row items-center gap-4 w-26 justify-end">
+      <div className="flex flex-row items-center gap-4 w-26 justify-end md:pr-4">
         <span
           className={`${transaction.type === "income" ? "text-green-600" : "text-red-600"}`}
         >

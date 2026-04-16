@@ -1,13 +1,14 @@
-import { useState } from "react";
+import { useApp } from "../context/AppProvider";
 import { Sun, Moon } from "lucide-react";
 
 export default function ThemeController() {
-  const [theme, setTheme] = useState("night");
+  const { theme, setTheme } = useApp();
 
   const toggleTheme = () => {
-    const newTheme = theme === "night" ? "emerald" : "night";
+    const newTheme = theme === "night" ? "nord" : "night";
     setTheme(newTheme);
     document.documentElement.setAttribute("data-theme", newTheme);
+    localStorage.setItem("theme", newTheme);
   };
 
   return (

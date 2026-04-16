@@ -1,6 +1,6 @@
 import TransactionCard from "../components/TransactionCard";
 import { useTransactions } from "../context/TransactionsProvider";
-import Scorecards from "../components/Scorecards";
+import Scorecards from "../components/dashboard/Scorecards";
 import { lazy, Suspense } from "react";
 
 const TransactionsController = lazy(
@@ -20,8 +20,7 @@ export default function Transactions() {
 
     return filteredTransactions.map((transaction) => {
       if (typeof transaction === "undefined") {
-        console.log("Transaction without id:", transaction);
-        return null; // Skip rendering this transaction
+        return null;
       }
 
       return <TransactionCard key={transaction.id} transaction={transaction} />;

@@ -1,5 +1,6 @@
 import TransactionsProvider from "./context/TransactionsProvider";
 import AppProvider from "./context/AppProvider";
+import DashboardProvider from "./context/DashboardProvider";
 import { Routes, Route } from "react-router";
 import Transactions from "./pages/Transactions";
 import Home from "./pages/Home";
@@ -9,12 +10,14 @@ export default function App() {
   return (
     <AppProvider>
       <TransactionsProvider>
-        <Routes>
-          <Route element={<Layout />}>
-            <Route index element={<Home />} />
-            <Route path="/transactions" element={<Transactions />} />
-          </Route>
-        </Routes>
+        <DashboardProvider>
+          <Routes>
+            <Route element={<Layout />}>
+              <Route index element={<Home />} />
+              <Route path="/transactions" element={<Transactions />} />
+            </Route>
+          </Routes>
+        </DashboardProvider>
       </TransactionsProvider>
     </AppProvider>
   );
