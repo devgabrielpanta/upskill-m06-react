@@ -1,6 +1,7 @@
 import { NavLink } from "react-router";
 import { Menu } from "lucide-react";
 import { useTransactions } from "../context/TransactionsProvider";
+import ThemeController from "./ThemeController";
 
 const routeMap = [
   {
@@ -59,7 +60,7 @@ export default function Header({ children }) {
           <ul className="menu h-full flex-1 items-start justify-start">
             <NavItems />
           </ul>
-          <div className="flex flex-col w-full items-center gap-2">
+          <div className="flex flex-col w-full items-center gap-6">
             <button
               className="btn btn-sm btn-primary btn-wide"
               onClick={() =>
@@ -68,7 +69,7 @@ export default function Header({ children }) {
             >
               Adicionar Transação
             </button>
-            <span>toggle theme</span>
+            <ThemeController />
           </div>
         </div>
       </div>
