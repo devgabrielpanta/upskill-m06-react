@@ -61,3 +61,24 @@ export const updateTransaction = async (payload) => {
     console.log(error.message);
   }
 };
+
+export const deleteTransaction = async (transactionId) => {
+  try {
+    const response = await fetch(`${url}/${transactionId}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`Response status: ${response.status}`);
+    }
+
+    await response.json();
+
+    return transactionId;
+  } catch (error) {
+    console.log(error.message);
+  }
+};

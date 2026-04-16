@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useTransactions } from "../context/TransactionsProvider";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, TriangleAlert } from "lucide-react";
 import {
   formattedAmountCurrency,
   formattedAmountNumber,
@@ -15,12 +15,14 @@ export default function TransactionsForm() {
     dispatch,
     createMutation,
     updateMutation,
+    deleteMutation,
   } = useTransactions();
 
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
   // Dispatch reducer state changes
   const handleInputChange = (field, value) => {
+    if (transactionAction === "deleting") return;
     let parsedValue = value;
 
     if (field === "amount") {
@@ -61,6 +63,8 @@ export default function TransactionsForm() {
         return createMutation.mutate(payload);
       case "editing":
         return updateMutation.mutate(payload);
+      case "deleting":
+        return deleteMutation.mutate(transactionData.id);
     }
   };
 
@@ -89,7 +93,8 @@ export default function TransactionsForm() {
 
         <div className="divider"></div>
 
-        <div className="flex flex-col w-full items-center gap-3">
+        {/* BODY */}
+        <div className="relative flex flex-col w-full items-center gap-3">
           <div className="grid grid-cols-[6rem_1fr] gap-4 w-full">
             {/* AMOUNT */}
             <div className="flex flex-col gap-2 text-xs font-medium">
@@ -98,6 +103,7 @@ export default function TransactionsForm() {
                 type="text"
                 className={`input bg-base-200 ${transactionData.type === "income" ? "text-green-600" : "text-red-600"}`}
                 placeholder="0.00 €"
+                disabled={transactionAction === "deleting"}
                 value={formattedAmountCurrency(transactionData.amount)}
                 onChange={(e) => handleInputChange("amount", e.target.value)}
               />
@@ -128,6 +134,7 @@ export default function TransactionsForm() {
               <input
                 type="date"
                 className="input bg-base-200"
+                disabled={transactionAction === "deleting"}
                 value={transactionData.date}
                 onChange={(e) => handleInputChange("date", e.target.value)}
               />
@@ -140,11 +147,12 @@ export default function TransactionsForm() {
                 <button
                   className="relative input m-1 flex justify-between items-center bg-base-200"
                   onClick={() => setDropdownOpen(true)}
+                  disabled={transactionAction === "deleting"}
                 >
                   <span>{getCategoryLabel()}</span>
                   <ChevronDown />
                 </button>
-                {dropdownOpen && (
+                {transactionAction !== "deleting" && dropdownOpen && (
                   <ul className="absolute top-0 dropdown-content bg-base-200 rounded-box z-10 w-40 p-2 shadow-sm flex flex-col gap-2 h-50 overflow-y-scroll">
                     {categoryList.map((categ) => (
                       <li key={`categ-selector-${categ.slug}`}>
@@ -173,17 +181,39 @@ export default function TransactionsForm() {
               placeholder="Descreva a operação..."
               value={transactionData.description}
               onChange={(e) => handleInputChange("description", e.target.value)}
+              disabled={transactionAction === "deleting"}
             />
           </div>
+        </div>
 
+        {/* DELETE CONFIRMATION */}
+        {transactionAction === "deleting" && (
+          <div className="flex flex-col items-center gap-2 my-4 font-semibold text-sm">
+            <span className="inline-flex gap-2 items-center text-red-500 animate-pulse duration-200 delay-75">
+              <TriangleAlert size={16} /> Essa ação é irreversível!
+            </span>
+            <span className="text-error ">
+              Tem certeza que deseja excluir esta transação?
+            </span>
+          </div>
+        )}
+
+        {/* ACTION BUTTONS */}
+        <div className="flex flex-col w-full items-center gap-3">
           <button className="btn btn-primary w-full" onClick={handleSubmit}>
-            Guardar
+            {transactionAction === "creating"
+              ? "Adicionar Transação"
+              : transactionAction === "editing"
+                ? "Salvar Alterações"
+                : "Sim, pode excluir!"}
           </button>
           <button
             className="btn btn-error btn-soft w-full"
             onClick={handleCloseForm}
           >
-            Cancelar
+            {transactionAction === "deleting"
+              ? "Não, voltar atrás..."
+              : "Cancelar"}
           </button>
         </div>
       </div>

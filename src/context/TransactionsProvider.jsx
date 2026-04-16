@@ -4,6 +4,7 @@ import {
   getTransactions,
   createTransaction,
   updateTransaction,
+  deleteTransaction,
 } from "../services/transaction.api";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { initialTransactionData } from "../services/transaction.service";
@@ -107,6 +108,19 @@ export default function TransactionsProvider({ children }) {
     },
   });
 
+  const deleteMutation = useMutation({
+    mutationFn: (transactionId) => deleteTransaction(transactionId),
+    onSuccess: (deletedTransaction) => {
+      queryClient.setQueryData(["transactionsList"], (oldTransactions) => [
+        ...oldTransactions.filter(
+          (transaction) => transaction.id !== deletedTransaction,
+        ),
+      ]);
+
+      dispatch({ type: "setTransactionAction", value: null });
+    },
+  });
+
   return (
     <TransactionsContext.Provider
       value={{
@@ -115,6 +129,7 @@ export default function TransactionsProvider({ children }) {
         transactionList,
         createMutation,
         updateMutation,
+        deleteMutation,
       }}
     >
       {children}

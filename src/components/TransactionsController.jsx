@@ -85,7 +85,7 @@ export default function TransactionsController() {
 
   useEffect(() => {
     handleController();
-  }, [state]);
+  }, [state]); //eslint-disable-line react-hooks/exhaustive-deps
 
   // Return a reausable search which mutate the state
   const renderSearchBar = () => (

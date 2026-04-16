@@ -11,8 +11,8 @@ export default function TransactionCard({ transaction }) {
     setOpenMenu(!openMenu);
   };
 
-  const handleStartEditing = () => {
-    dispatch({ type: "setTransactionAction", value: "editing" });
+  const handleAction = (action) => {
+    dispatch({ type: "setTransactionAction", value: action });
     dispatch({ type: "setTransactionData", value: transaction });
     toggleMenuOpen();
   };
@@ -57,12 +57,15 @@ export default function TransactionCard({ transaction }) {
           <div className="absolute right-0 top-full mt-1 z-20 flex flex-col gap-2 bg-base-200 p-2 rounded shadow">
             <button
               className="btn btn-xs flex flex-row gap-2 items-center text-primary"
-              onClick={handleStartEditing}
+              onClick={() => handleAction("editing")}
             >
               <Pencil size={10} />
               <span className="text-xs">Editar</span>
             </button>
-            <button className="btn btn-xs flex flex-row gap-2 items-center text-error">
+            <button
+              className="btn btn-xs flex flex-row gap-2 items-center text-error"
+              onClick={() => handleAction("deleting")}
+            >
               <Trash size={10} />
               <span className="text-xs">Excluir</span>
             </button>
