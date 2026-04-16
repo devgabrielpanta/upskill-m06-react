@@ -1,5 +1,4 @@
 import TransactionCard from "../components/TransactionCard";
-//import TransactionsController from "../components/TransactionsController";
 import { useTransactions } from "../context/TransactionsProvider";
 import Scorecards from "../components/Scorecards";
 import { lazy, Suspense } from "react";
@@ -10,6 +9,19 @@ const TransactionsController = lazy(
 
 export default function Transactions() {
   const { filteredTransactions } = useTransactions();
+
+  const renderedTransactions = () => {
+    if (!filteredTransactions || filteredTransactions.length === 0)
+      return (
+        <>
+          <p>Empty transactions...</p>
+        </>
+      );
+
+    return filteredTransactions.map((transaction) => (
+      <TransactionCard key={transaction.id} transaction={transaction} />
+    ));
+  };
 
   return (
     <div className="flex flex-col md:flex-row w-full h-full">
@@ -23,14 +35,7 @@ export default function Transactions() {
         </div>
 
         <div className="flex grow flex-col gap-4 w-full min-h-fit mt-4 pb-20 md:pb-10">
-          {filteredTransactions &&
-            filteredTransactions.length > 0 &&
-            filteredTransactions.map((transaction) => (
-              <TransactionCard
-                key={`transaction-card-${transaction.id}`}
-                transaction={transaction}
-              />
-            ))}
+          {renderedTransactions()}
         </div>
       </div>
     </div>

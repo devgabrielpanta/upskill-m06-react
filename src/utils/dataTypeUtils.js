@@ -14,6 +14,16 @@ export function formattedAmountCurrency(stringOrInteger) {
   return formatStringAmount(stringOrInteger);
 }
 
+export function formattedAmountNumber(currency) {
+  const cleaned = String(currency)
+    .replace("€", "")
+    .replace(" ", "")
+    .replace(",", ".")
+    .replace("-", "");
+
+  return parseFloat(cleaned);
+}
+
 // ====================================================================
 //                           Helper Functions
 // ====================================================================

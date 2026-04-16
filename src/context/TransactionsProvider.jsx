@@ -1,5 +1,8 @@
-import { createContext, useContext, useState } from "react";
-import { mockTransactionList, mockCategoryList } from "../utils/mockData";
+import { createContext, useContext, useEffect, useState } from "react";
+import { mockCategoryList } from "../utils/mockData";
+import { createTransaction } from "../services/transaction.api";
+import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
+import { getTransactions } from "../services/transaction.api";
 
 const sortedCategoryList = mockCategoryList.sort((a, b) => {
   const isAOutros = String(a.label).toLowerCase() === "outro";
@@ -15,11 +18,32 @@ const sortedCategoryList = mockCategoryList.sort((a, b) => {
 export const TransactionsContext = createContext(null);
 
 export default function TransactionsProvider({ children }) {
+  // fetch transactions with react-query
+  const { data: transactionList } = useQuery({
+    queryKey: ["transactionsList"],
+    queryFn: getTransactions,
+  });
+
   const [transactionAction, setTransactionAction] = useState(null); // null | creating | editing | deleting
-  const [transactionList, setTransactionList] = useState(mockTransactionList);
   const [categoryList, setCategoryList] = useState(sortedCategoryList);
   const [filteredTransactions, setFilteredTransactions] =
     useState(transactionList);
+
+  const queryClient = useQueryClient();
+
+  useEffect(() => {
+    setFilteredTransactions(transactionList);
+  }, [transactionList]);
+
+  const createMutation = useMutation({
+    mutationFn: (payload) => createTransaction(payload),
+    onSuccess: (newTransaction) => {
+      queryClient.setQueryData(["transactionsList"], (oldTransactions) => [
+        ...oldTransactions,
+        newTransaction,
+      ]);
+    },
+  });
 
   return (
     <TransactionsContext.Provider
@@ -27,11 +51,11 @@ export default function TransactionsProvider({ children }) {
         transactionAction,
         setTransactionAction,
         transactionList,
-        setTransactionList,
         filteredTransactions,
         setFilteredTransactions,
         categoryList,
         setCategoryList,
+        createMutation,
       }}
     >
       {children}

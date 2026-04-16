@@ -1,7 +1,10 @@
 import { useReducer, useState } from "react";
 import { useTransactions } from "../context/TransactionsProvider";
 import { ChevronDown } from "lucide-react";
-import { formattedAmountCurrency } from "../utils/dataTypeUtils";
+import {
+  formattedAmountCurrency,
+  formattedAmountNumber,
+} from "../utils/dataTypeUtils";
 import BtnTransactionType from "./BtnTransactionType";
 
 const initialTransaction = {
@@ -23,8 +26,12 @@ function reducer(state, action) {
 }
 
 export default function TransactionsForm() {
-  const { transactionAction, setTransactionAction, categoryList } =
-    useTransactions();
+  const {
+    transactionAction,
+    setTransactionAction,
+    categoryList,
+    createMutation,
+  } = useTransactions();
   const [state, dispatch] = useReducer(reducer, initialTransaction);
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
@@ -56,6 +63,20 @@ export default function TransactionsForm() {
   const handleCloseForm = () => {
     setTransactionAction(null);
     dispatch({ type: "setInitialData", payload: initialTransaction });
+  };
+
+  const handleSubmit = () => {
+    const payload = {
+      ...state,
+      amount:
+        state.type === "income"
+          ? formattedAmountNumber(state.amount)
+          : formattedAmountNumber(state.amount) * -1,
+    };
+    switch (transactionAction) {
+      case "creating":
+        return createMutation.mutate(payload);
+    }
   };
 
   if (!transactionAction) return null;
@@ -170,7 +191,9 @@ export default function TransactionsForm() {
             />
           </div>
 
-          <button className="btn btn-primary w-full">Guardar</button>
+          <button className="btn btn-primary w-full" onClick={handleSubmit}>
+            Guardar
+          </button>
           <button
             className="btn btn-error btn-soft w-full"
             onClick={handleCloseForm}
